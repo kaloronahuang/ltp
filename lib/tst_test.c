@@ -1537,6 +1537,8 @@ static void run_tests(void)
 	}
 
 	for (i = 0; i < tst_test->tcnt; i++) {
+		tst_res(TINFO, "Enter testcase %i", i);
+
 		saved_results = *results;
 		heartbeat();
 		tst_test->test(i);
@@ -1548,6 +1550,8 @@ static void run_tests(void)
 
 		if (results_equal(&saved_results, results))
 			tst_brk(TBROK, "Test %i haven't reported results!", i);
+
+		tst_res(TINFO, "Exit testcase %i", i);
 	}
 }
 
