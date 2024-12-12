@@ -1524,7 +1524,9 @@ static void run_tests(void)
 	if (!tst_test->test) {
 		saved_results = *results;
 		heartbeat();
+		tst_res(TINFO, "Enter test_all");
 		tst_test->test_all();
+		tst_res(TINFO, "Exit test_all");
 
 		if (tst_getpid() != main_pid)
 			exit(0);
@@ -1829,9 +1831,9 @@ static int run_tcases_per_fs(void)
 
 		if (!fs)
 			continue;
-
+		tst_res(TINFO, "Enter fs %d", i);
 		run_tcase_on_fs(fs, filesystems[i]);
-
+		tst_res(TINFO, "Exit fs %d", i);
 		if (ret == TCONF)
 			continue;
 
@@ -1876,11 +1878,15 @@ void tst_run_tcases(int argc, char *argv[], struct tst_test *self)
 		test_variants = tst_test->test_variants;
 
 	for (tst_variant = 0; tst_variant < test_variants; tst_variant++) {
-		if (tst_test->all_filesystems || count_fs_descs() > 1)
+		tst_res(TINFO, "Enter test variant %d", tst_variant);
+		if (tst_test->all_filesystems || count_fs_descs() > 1) {
+			tst_res(TINFO, "Per-FS testsuite");
 			ret |= run_tcases_per_fs();
-		else
+		} else {
+			tst_res(TINFO, "Not Per-FS testsuite");
 			ret |= fork_testrun();
-
+		}
+		tst_res(TINFO, "Exit test variant %d", tst_variant);
 		if (ret & ~(TCONF))
 			goto exit;
 	}
