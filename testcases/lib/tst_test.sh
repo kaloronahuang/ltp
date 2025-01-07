@@ -647,6 +647,7 @@ _tst_run_tcases_per_fs()
 {
 	local fs
 	local filesystems
+	local _kgym_i=0
 
 	filesystems="$(tst_supported_fs -s "$TST_SKIP_FILESYSTEMS")"
 	if [ $? -ne 0 ]; then
@@ -655,8 +656,11 @@ _tst_run_tcases_per_fs()
 
 	for fs in $filesystems; do
 		tst_res TINFO "=== Testing on $fs ==="
+		tst_res TINFO "Enter fs $_kgym_i"
 		TST_FS_TYPE="$fs"
 		_tst_run_iterations
+		tst_res TINFO "Exit fs $_kgym_i"
+		_kgym_i=$(( $_kgym_i + 1 ))
 	done
 }
 
@@ -775,11 +779,13 @@ tst_run()
 
 	TST_MNTPOINT="${TST_MNTPOINT:-$PWD/mntpoint}"
 
+	tst_res TINFO "Enter test variant 0"
 	if [ "$TST_ALL_FILESYSTEMS" = 1 ]; then
 		_tst_run_tcases_per_fs
 	else
 		_tst_run_iterations
 	fi
+	tst_res TINFO "Exit test variant 0"
 
 	_tst_do_exit
 }
@@ -788,6 +794,7 @@ _tst_run_iterations()
 {
 	local _tst_i=$TST_ITERATIONS
 	local _tst_j
+	local _kgym_i=0
 
 	[ "$TST_NEEDS_TMPDIR" = 1 ] && cd "$TST_TMPDIR"
 
@@ -806,6 +813,7 @@ _tst_run_iterations()
 
 	#TODO check that test reports some results for each test function call
 	while [ $_tst_i -gt 0 ]; do
+		tst_res TINFO "Enter testcase $_kgym_i"
 		if [ -n "$TST_TEST_DATA" ]; then
 			tst_require_cmds cut tr wc
 			_tst_max=$(( $(echo $TST_TEST_DATA | tr -cd "$TST_TEST_DATA_IFS" | wc -c) +1))
@@ -816,7 +824,9 @@ _tst_run_iterations()
 		else
 			_tst_run_tests
 		fi
+		tst_res TINFO "Exit testcase $_kgym_i"
 		_tst_i=$((_tst_i-1))
+		_kgym_i=$(( $_kgym_i + 1 ))
 	done
 
 	_tst_do_cleanup
